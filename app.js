@@ -15,17 +15,23 @@ redisClient.connect();
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 
 app.get("*", async (req, res) => {
-  let key = req.url.split("?")[0];
-  let data = await redisClient.get(key);
-  if (data) {
-    console.log(`From Redis : ${key}`);
-    res.json(JSON.parse(data));
-  } else {
-    let data = await fetch(`${process.env.MOCK_URL}${key}`);
-    let jsonData = await data.json();
-    console.log(`Setting in Redis : ${key}`);
-    await redisClient.set(key, JSON.stringify(jsonData));
-    res.json(jsonData);
+  try {
+    let key = req.url.split("?")[0];
+    let data = await redisClient.get(key);
+    if (data) {
+      console.log(`From Redis : ${key}`);
+      res.json(JSON.parse(data));
+    } else {
+      let data = await fetch(`${process.env.MOCK_URL}${key}`);
+      let jsonData = await data.json();
+      console.log(`Setting in Redis : ${key}`);
+      await redisClient.set(key, JSON.stringify(jsonData));
+      res.json(jsonData);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500);
+    res.json({ error: err });
   }
 });
 
