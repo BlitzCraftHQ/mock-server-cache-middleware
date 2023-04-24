@@ -29,7 +29,7 @@ app.get("*", async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log("Server is listening on port 5000");
+app.listen(parseInt(process.env.PORT || "5000"), "0.0.0.0", () => {
+  console.log(`Server is listening on port ${process.env.PORT || "5000"}`);
   console.log("http://localhost:5000");
 });
