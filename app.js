@@ -1,4 +1,6 @@
 const express = require("express");
+const cors = require("cors");
+const morgan = require("morgan");
 const app = express();
 
 const dotenv = require("dotenv");
@@ -13,6 +15,10 @@ const redisClient = createClient({
 redisClient.connect();
 
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
+
+app.use(cors());
+app.use(morgan("dev"));
+app.use(express.json());
 
 app.get("*", async (req, res) => {
   try {
